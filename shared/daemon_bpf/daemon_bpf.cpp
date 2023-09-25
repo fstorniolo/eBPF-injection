@@ -23,8 +23,8 @@
  */
 
 //#define _GNU_SOURCE
-//#include <unistd.h>
-//#include <stdlib.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <fcntl.h>
 //#include <sched.h>
 
@@ -39,6 +39,9 @@
 #include <cerrno>
 #include <csignal>
 #include <ctime>
+
+#include <thread>
+#include <chrono>
 
 using namespace std;
 
@@ -56,6 +59,14 @@ using namespace std;
 
 // To return informations to the device and then to the host, just write to device
 // in order to trigger some action on the host side
+
+struct return_elem_iter {
+    uint64_t physical_address;
+    uint64_t order;
+};
+
+int count_handler_ringbuf = 0;
+
 
 bpf_injection_msg_t recv_bpf_injection_msg(int fd){
 	bpf_injection_msg_t mymsg;
@@ -96,9 +107,10 @@ bpf_injection_msg_t recv_bpf_injection_msg(int fd){
 
 int handler_ringbuf(void *ctx, void *data, size_t){
     /* Each time a new element is available in the ringbuffer this function is called */
+    // cout << "handler_ringbuf called" << endl;
     bpf_event_t *event = static_cast<bpf_event_t*>(data);
-
     uint32_t data_len = sizeof(bpf_injection_msg_header) + event->size;
+    count_handler_ringbuf++;
 
     bpf_injection_msg_header *hdr = (bpf_injection_msg_header*)malloc(data_len);
     hdr->payload_len = event->size;
@@ -107,9 +119,6 @@ int handler_ringbuf(void *ctx, void *data, size_t){
     hdr->version = 1;
 
     memcpy((char*)hdr+sizeof(*hdr),&event->payload,hdr->payload_len);
-
-    //For debug
-    //uint64_t *ptr = (uint64_t*)&event->payload;
 
     int dev_fd = reinterpret_cast<long>(ctx);
 
@@ -163,8 +172,11 @@ int handleProgramInjection(int dev_fd, bpf_injection_msg_t message){
 
     sendAck(dev_fd,message.header.service,true);
 
+    std::cout << "pid: " << getpid() << std::endl;
+
     while(true){
-        ring_buffer__poll(buffer_bpf,50);   //50 ms sleep
+        ring_buffer__poll(buffer_bpf,2000);   //50 ms sleep
+        cout << "handler_ringbuff calls: " << count_handler_ringbuf << endl;
         continue;
     }
 }

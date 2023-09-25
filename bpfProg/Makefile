@@ -12,7 +12,7 @@ endif
 
 folder:=$(shell mkdir -vp ${BUILD_DIR})
 
-all: ${BUILD_DIR}/vcpu_pinning ${BUILD_DIR}/memory_swap ${BUILD_DIR}/firewall ${BUILD_DIR}/xdp ${BUILD_DIR}/mlock
+all: ${BUILD_DIR}/vcpu_pinning ${BUILD_DIR}/memory_swap ${BUILD_DIR}/firewall ${BUILD_DIR}/xdp ${BUILD_DIR}/mlock ${BUILD_DIR}/prova_bpf_prog
 
 ${BUILD_DIR}/vcpu_pinning: vcpu_pinning.c
 	$(CC) $(CFLAGS) $(TARGET) -target bpf -g -c $< -o $@
@@ -25,6 +25,9 @@ ${BUILD_DIR}/firewall: firewall.c header.h
 
 ${BUILD_DIR}/xdp: xdp.c
 	$(CC) $(CFLAGS) $(TARGET) -target bpf -c $< -o $@
+
+${BUILD_DIR}/prova_bpf_prog: prova_bpf_prog.c
+	$(CC) $(CFLAGS) $(TARGET) -target bpf -g -c $< -o $@
 
 ${BUILD_DIR}/mlock: mlock.c
 	$(CC) $(CFLAGS) $(TARGET) -target bpf -g -c $< -o $@

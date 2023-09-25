@@ -24,7 +24,7 @@
 #include <linux/module.h>
 #include <linux/pci.h>
 
-#include <bpf_injection_header.h>	
+#include "bpf_injection_header.h"	
 
 
 #define NEWDEV_BUF_PCI_BAR      1

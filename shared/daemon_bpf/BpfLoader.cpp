@@ -1,4 +1,6 @@
 #include "BpfLoader.h"
+#include <unistd.h>
+
 using namespace std;
 
 BpfLoader::BpfLoader(bpf_injection_msg_t message){
@@ -15,7 +17,7 @@ BpfLoader::BpfLoader(bpf_injection_msg_t message){
         cerr<<"finding a prog in obj file failed"<<endl;
         throw -1;
     }
-    
+
     cout<<"BPF Program Type"<<endl;
     cout<<bpf_program__section_name(prog)<<endl;
 
@@ -52,6 +54,17 @@ int BpfLoader::loadAndGetMap(){
 		const char *name = bpf_map__name(map);
         cout<<"[LOG] map: "<<name<<endl;
     }
+
+    auto pid = getpid();
+    int key = 0;
+    int map_fd_pid = bpf_object__find_map_fd_by_name(obj,"selected_pid_map");
+
+    if(map_fd_pid < 0){
+        cerr<<"Error map 'selected_pid_map' not found"<<endl;
+        return -1;
+    }
+
+    bpf_map_update_elem(map_fd_pid, &key, &pid, BPF_ANY);
 
     int map_fd = bpf_object__find_map_fd_by_name(obj,"bpf_ringbuffer");
     if(map_fd < 0){
