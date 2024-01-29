@@ -105,7 +105,7 @@ bpf_injection_msg_t recv_bpf_injection_msg(int fd){
 	return mymsg;
 }
 
-int handler_ringbuf(void *ctx, void *data, size_t){
+int handler_ringbuf(void *ctx, void *data, size_t rcv_len){
     /* Each time a new element is available in the ringbuffer this function is called */
     // cout << "handler_ringbuf called" << endl;
     bpf_event_t *event = static_cast<bpf_event_t*>(data);
@@ -175,7 +175,7 @@ int handleProgramInjection(int dev_fd, bpf_injection_msg_t message){
     std::cout << "pid: " << getpid() << std::endl;
 
     while(true){
-        ring_buffer__poll(buffer_bpf,2000);   //50 ms sleep
+        ring_buffer__poll(buffer_bpf,50);   //50 ms sleep
         cout << "handler_ringbuff calls: " << count_handler_ringbuf << endl;
         continue;
     }

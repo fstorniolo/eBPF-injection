@@ -166,7 +166,7 @@ int bpf_prog1(struct pt_regs *ctx)
 	bpf_printk("kretprobe __task_pid_nr_ns: pid %d \n", c_pid);
 
 	start = bpf_ktime_get_ns();
-	bpf_iter_buddyallocator_new(&it, 0);
+	bpf_iter_buddyallocator_new(&it, 9);
 
 	uint64_t total_ram = 0;
 
