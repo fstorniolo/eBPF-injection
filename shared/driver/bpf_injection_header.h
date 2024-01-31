@@ -4,7 +4,7 @@
 *
 *	Message structure used to exchange information between guest
 *	and host during setup and execution phase of given eBPF programs.
-*	Typical workflow is to have the host sending a message containing 
+*	Typical workflow is to have the host sending a message containing
 *	the eBPF program to be executed and then receive from guest a result
 *	to be used in the specific scenario.
 *
@@ -15,6 +15,7 @@
 #define PROGRAM_INJECTION_RESULT 					2
 #define PROGRAM_INJECTION_AFFINITY 					3
 #define PROGRAM_INJECTION_AFFINITY_RESULT				4
+#define SIGNED_PROGRAM_INJECTION					5
 #define SHUTDOWN_REQUEST						15
 #define ERROR								16
 #define RESET								17

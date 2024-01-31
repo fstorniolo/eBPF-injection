@@ -84,12 +84,12 @@ struct bpf_injection_msg_t prepare_bpf_injection_message(const char* path){
 	struct bpf_injection_msg_t mymsg;
 	int len;
 	mymsg.header.version = DEFAULT_VERSION;
-	mymsg.header.type = PROGRAM_INJECTION;
+	mymsg.header.type = SIGNED_PROGRAM_INJECTION;
 	mymsg.header.service = 4;
 	FILE* fp = fopen(path, "r");
 	if(fp) {
 		fseek(fp, 0 , SEEK_END);
-		mymsg.header.payload_len = ftell(fp);	  
+		mymsg.header.payload_len = ftell(fp);
 	  	fseek(fp, 0 , SEEK_SET);// needed for next read from beginning of file
 	  	mymsg.payload = malloc(mymsg.header.payload_len);
 	  	len = fread(mymsg.payload, 1, mymsg.header.payload_len, fp);
@@ -118,7 +118,7 @@ int main (int argc, char **argv){
   struct sockaddr_in servername;
   struct bpf_injection_msg_t mymsg;
 
-  mymsg = prepare_bpf_injection_message(argv[1]);  
+  mymsg = prepare_bpf_injection_message(argv[1]);
   // print_bpf_injection_message(mymsg.header);
 
   /* Create the socket. */

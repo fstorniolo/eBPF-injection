@@ -3,14 +3,12 @@
 
 using namespace std;
 
-BpfLoader::BpfLoader(bpf_injection_msg_t message){
-    this->obj = bpf_object__open_mem(message.payload,message.header.payload_len,NULL);
+BpfLoader::BpfLoader(bpf_injection_msg_t message, uint32_t prog_len){
+    this->obj = bpf_object__open_mem(message.payload, prog_len, NULL);
     if (libbpf_get_error(this->obj)) {
         cerr<<"ERROR: opening BPF object file failed"<<endl;
         throw -1;
     }
-
-    delete[] (uint8_t*)message.payload;
 
     this->prog = bpf_object__find_program_by_name(this->obj, "bpf_prog1");
     if (!this->prog) {
@@ -20,7 +18,6 @@ BpfLoader::BpfLoader(bpf_injection_msg_t message){
 
     cout<<"BPF Program Type"<<endl;
     cout<<bpf_program__section_name(prog)<<endl;
-
 }
 
 int BpfLoader::loadAndGetMap(){
@@ -73,7 +70,6 @@ int BpfLoader::loadAndGetMap(){
     }
 
     return map_fd;
-
 
 }
 

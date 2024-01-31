@@ -15,6 +15,7 @@
 #define PROGRAM_INJECTION_ACK						2
 #define PROGRAM_INJECTION_RESULT					3
 #define PROGRAM_INJECTION_UNLOAD					4
+#define SIGNED_PROGRAM_INJECTION					5
 #define SHUTDOWN_REQUEST							15
 #define ERROR										16
 #define RESET										17
